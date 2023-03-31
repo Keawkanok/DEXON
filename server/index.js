@@ -23,12 +23,6 @@ app.get("/api/data", (req, res) => {
   if (line_number) {
     sql += ` AND line_number = "${line_number}"`;
   }
-  // if (location) {
-  //   sql += ` AND location = "${location}"`;
-  // }
-  // if (service) {
-  //   sql += ` AND service = "${service}"`;
-  // }
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -249,9 +243,9 @@ app.get("/api/data/cml", (req, res) => {
   if (line_number) {
     sql += ` AND line_number = "${line_number}"`;
   }
-  if (cml_number) {
-    sql += ` AND cml_number = "${cml_number}"`;
-  }
+  // if (cml_number) {
+  //   sql += ` AND cml_number = ${cml_number}`;
+  // }
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -297,7 +291,7 @@ app.put("/api/data/update/cml", (req, res) => {
   // const cmlId = req.params.line_number;
   // const q =
   //   "UPDATE cml SET cml_number = ?, cml_description = ?, actual_outside_diameter = ?, design_thickness = ?, structural_thickness = ?, required_thickness = ? WHERE cml_number = ?";
-  // console.log(req.query);
+  console.log(req.body);
   const {
     line_number,
     cml_number,
@@ -307,16 +301,16 @@ app.put("/api/data/update/cml", (req, res) => {
     structural_thickness,
     required_thickness,
   } = req.body;
-  // console.log(
-  //   line_number,
-  //   cml_number,
-  //   cml_description,
-  //   actual_outside_diameter,
-  //   design_thickness,
-  //   structural_thickness,
-  //   required_thickness,
-  //   "update cml"
-  // );
+  console.log(
+    line_number,
+    cml_number,
+    cml_description,
+    actual_outside_diameter,
+    design_thickness,
+    structural_thickness,
+    required_thickness,
+    "update cml"
+  );
   let sql = "UPDATE cml SET ";
   if (cml_description) {
     sql += ` cml_description = "${cml_description}"`;
@@ -371,18 +365,18 @@ app.delete("/api/data/delete/cml", (req, res) => {
 
 // TEST POINT
 app.get("/api/data/test_point", (req, res) => {
-  const { line_number, cml_number, tp_number } = req.query;
+  const { cml_number } = req.query;
   // console.log(line_number, cml_number, tp_number, "get test_point");
   let sql = "SELECT * FROM test_point WHERE 1=1";
-  if (line_number) {
-    sql += ` AND line_number = "${line_number}"`;
-  }
+  // if (line_number) {
+  //   sql += ` AND line_number = "${line_number}"`;
+  // }
   if (cml_number) {
     sql += ` AND cml_number = "${cml_number}"`;
   }
-  if (tp_number) {
-    sql += ` AND tp_number = "${tp_number}"`;
-  }
+  // if (tp_number) {
+  //   sql += ` AND tp_number = "${tp_number}"`;
+  // }
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -403,7 +397,7 @@ app.post("/api/data/post/test_point", (req, res) => {
     note,
     "post test_point"
   );
-  let sql = `INSERT INTO test_point(line_number, cml_number, tp_number, tp_description, note) VALUES ("${line_number}",${cml_number},${tp_number},"${tp_description}","${note}")`;
+  let sql = `INSERT INTO test_point(line_number, cml_number, tp_number, tp_description, note) VALUES ("${line_number}",${cml_number},${tp_number},${tp_description},"${note}")`;
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -426,7 +420,7 @@ app.put("/api/data/update/test_point", (req, res) => {
   );
   let sql = "UPDATE test_point SET ";
   if (tp_description) {
-    sql += ` tp_description = "${tp_description}"`;
+    sql += ` tp_description = ${tp_description}`;
   }
   if (note) {
     sql += ` , note = "${note}"`;
@@ -450,23 +444,23 @@ app.put("/api/data/update/test_point", (req, res) => {
 app.delete("/api/data/delete/test_point", (req, res) => {
   const { line_number, cml_number, tp_number } = req.query;
   console.log(line_number, cml_number, tp_number, "delete test_point");
-  // let sql = "DELETE FROM test_point WHERE 1=1";
-  // if (line_number) {
-  //   sql += ` AND line_number = "${line_number}"`;
-  // }
-  // if (cml_number) {
-  //   sql += ` AND cml_number = ${cml_number}`;
-  // }
-  // if (tp_number) {
-  //   sql += ` AND tp_number = ${tp_number}`;
-  // }
-  // db.query(sql, (err, result) => {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     res.send(result);
-  //   }
-  // });
+  let sql = "DELETE FROM test_point WHERE 1=1";
+  if (line_number) {
+    sql += ` AND line_number = "${line_number}"`;
+  }
+  if (cml_number) {
+    sql += ` AND cml_number = ${cml_number}`;
+  }
+  if (tp_number) {
+    sql += ` AND tp_number = ${tp_number}`;
+  }
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
 });
 
 // ************************************************************************************************************************* //
@@ -476,14 +470,14 @@ app.get("/api/data/thickness", (req, res) => {
   const { line_number, cml_number, tp_number } = req.query;
   // console.log(line_number, cml_number, "get thickness");
   let sql = "SELECT * FROM thickness WHERE 1=1";
-  if (line_number) {
-    sql += ` AND line_number = "${line_number}"`;
-  }
-  if (cml_number) {
-    sql += ` AND cml_number = "${cml_number}"`;
-  }
+  // if (line_number) {
+  //   sql += ` AND line_number = "${line_number}"`;
+  // }
+  // if (cml_number) {
+  //   sql += ` AND cml_number = ${cml_number}`;
+  // }
   if (tp_number) {
-    sql += ` AND tp_number = "${tp_number}"`;
+    sql += ` AND tp_number = ${tp_number}`;
   }
   db.query(sql, (err, result) => {
     if (err) {
@@ -495,7 +489,7 @@ app.get("/api/data/thickness", (req, res) => {
 });
 
 app.post("/api/data/post/thickness", (req, res) => {
-  console.log(req.query);
+  console.log(req.body);
   const {
     line_number,
     cml_number,
@@ -511,8 +505,7 @@ app.post("/api/data/post/thickness", (req, res) => {
     actual_thickness,
     "post thickness"
   );
-  let sql = `INSERT INTO thickness(line_number, cml_number, tp_number, inspection_date, actual_thickness) 
-            VALUES ("${line_number}",${cml_number},${tp_number},"${inspection_date}",${actual_thickness})`;
+  let sql = `INSERT INTO thickness(line_number, cml_number, tp_number, inspection_date, actual_thickness) VALUES ("${line_number}",${cml_number},${tp_number},"${inspection_date}",${actual_thickness})`;
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -563,10 +556,6 @@ app.put("/api/data/update/thickness", (req, res) => {
 });
 
 app.delete("/api/data/delele/thickness", (req, res) => {
-  // const line_number = req.params.line_number;
-  // const cml_number = req.params.cml_number;
-  // const tp_number = req.params.tp_number;
-
   const { line_number, cml_number, tp_number } = req.query;
   console.log(line_number, cml_number, tp_number, "delete thickness");
   let sql = "DELETE FROM thickness WHERE 1=1";
@@ -574,10 +563,10 @@ app.delete("/api/data/delele/thickness", (req, res) => {
     sql += ` AND line_number = "${line_number}"`;
   }
   if (cml_number) {
-    sql += ` AND cml_number = "${cml_number}"`;
+    sql += ` AND cml_number = ${cml_number}`;
   }
   if (tp_number) {
-    sql += ` AND tp_number = "${tp_number}"`;
+    sql += ` AND tp_number = ${tp_number}`;
   }
   db.query(sql, (err, result) => {
     if (err) {

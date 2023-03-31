@@ -1,6 +1,7 @@
 
 .table  {
-  padding: 50px;
+  padding: 10px;
+  
 }
 
 Table,
@@ -17,10 +18,6 @@ th,td {
   
 }
 
-.Link {
-  // color: black;
-}
-
 A:link {
   text-decoration:none;
 }
@@ -33,4 +30,27 @@ A:visited {
 
 .Title {
   margin-left: auto;
+}
+
+.InputGroup {
+  color: red;
+  margin-top: 10px;
+  margin-left: 5px;
+
+}
+
+.Card {
+  padding: 40px;
+}
+.card-body{
+  box-shadow: rgb(0 0 0 / 24%) 0px 3px 8px;
+}
+.thick-arrow-left {
+  width: 25px;
+  height: 25px;
+  border: 10px solid #333;
+  border-left: 0;
+  border-top: 0;
+
+  transform: rotate(135deg);
 }

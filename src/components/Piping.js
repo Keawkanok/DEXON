@@ -10,6 +10,7 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import Card from "react-bootstrap/Card";
 
 export default function Piping() {
   const [show, setShow] = useState(false);
@@ -44,16 +45,12 @@ export default function Piping() {
 
   const [editing, setEditing] = useState(false);
   const [line_number, setId] = useState(null);
-  // const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     axios
       .get(`http://localhost:3001/api/data`)
       .then((response) => {
         setData(response.data);
-        // console.log(response.data);
-        // const date = moment(response.data[0].inservice_date).format("L");
-        // setDate(date);
       })
       .catch((error) => {
         console.log(error);
@@ -120,7 +117,7 @@ export default function Piping() {
       )
       .then(() => {
         // setData(line_number);
-        console.log(line_number, "line_number");
+        // console.log(line_number, "line_number");
       })
       .catch((error) => {
         console.log(error);
@@ -158,276 +155,319 @@ export default function Piping() {
     setIdLine(item.line_number);
   };
 
+  function refreshPage() {
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 1000);
+    console.log("page to reload");
+  }
   return (
-    <div className="table">
-      <h1 className="title">PIPING</h1>
-      <Button variant="light" className="mb-2" size="sm">
-        <Link className="Link" type="text" to={`/create-info`}>
-          ADD PIPING
-        </Link>
-      </Button>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>line number</th>
-            <th>location</th>
-            <th>from</th>
-            <th>to</th>
-            <th>pipe size (inch)</th>
-            <th>service</th>
-            <th>material</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index}>
-              <td>{item.line_number}</td>
-              <td>{item.location}</td>
-              <td>{item.froms}</td>
-              <td>{item.tos}</td>
-              <td>{item.pipe_size}</td>
-              <td>{item.service}</td>
-              <td>{item.material}</td>
-              <td>
+    <>
+      <br />
+      <div className="Card">
+        <h1 className="title">PIPING</h1>
+        <br />
+        <Card>
+          <Card.Body className="card-body">
+            {/* <Button variant="light" className="mb-2" size="sm">
+              <Link className="Link" type="text" to={`/create-info`}>
+                ADD PIPING
+              </Link>
+            </Button> */}
+            <div className="table">
+              <Modal.Header>
                 <Button
+                  href={`/create-info`}
                   variant="light"
-                  className="mb-2"
-                  size="sm"
-                  onClick={() => handleEdit(item)}
+                  className="mb-2 Title"
                 >
-                  info
-                </Button>{" "}
-                <Modal
-                  dialogClassName="modal-90w"
-                  show={show}
-                  onHide={handleClose}
-                >
-                  <Modal.Header closeButton>
-                    <Modal.Title>EDIT INFORMATION</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Form onSubmit={handleSubmit}>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>Line number</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={newline_number}
-                            onChange={(e) => setLine_number(e.target.value)}
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>location</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                          />
-                        </Form.Group>
-                      </Row>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>From</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={froms}
-                            onChange={(e) => setFrom(e.target.value)}
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>To</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={tos}
-                            onChange={(e) => setTo(e.target.value)}
-                          />
-                        </Form.Group>
-                      </Row>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>Drawing number</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={drawing_number}
-                            onChange={(e) => setDrawing_number(e.target.value)}
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>service</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={service}
-                            onChange={(e) => setService(e.target.value)}
-                          />
-                        </Form.Group>
-                      </Row>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>Material</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={material}
-                            onChange={(e) => setMaterial(e.target.value)}
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>Inservice date</Form.Label>
-                          <Form.Control
-                            type="date"
-                            value={inservice_date}
-                            onChange={(e) => setInservice_date(e.target.value)}
-                          />
-                        </Form.Group>
-                      </Row>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>Pipe size</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={pipe_size}
-                            onChange={(e) => setPipe_size(e.target.value)}
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>Original thickness</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={original_thickness}
-                            onChange={(e) =>
-                              setOriginal_thickness(e.target.value)
-                            }
-                          />
-                        </Form.Group>
-                      </Row>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>Stress</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={stress}
-                            onChange={(e) => setStress(e.target.value)}
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>Joint efficiency</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={joint_efficiency}
-                            onChange={(e) =>
-                              setJoint_efficiency(e.target.value)
-                            }
-                          />
-                        </Form.Group>
-                      </Row>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>Ca</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={ca}
-                            onChange={(e) => setCa(e.target.value)}
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>Design life</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={design_life}
-                            onChange={(e) => setDesign_life(e.target.value)}
-                          />
-                        </Form.Group>
-                      </Row>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>Design pressure</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={design_pressure}
-                            onChange={(e) => setDesign_pressure(e.target.value)}
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>Operating pressure</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={operating_pressure}
-                            onChange={(e) =>
-                              setOperating_pressure(e.target.value)
-                            }
-                          />
-                        </Form.Group>
-                      </Row>
-                      <Row className="mb-3">
-                        <Form.Group as={Col}>
-                          <Form.Label>Design temperature</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={design_temperature}
-                            onChange={(e) =>
-                              setDesign_temperature(e.target.value)
-                            }
-                          />
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                          <Form.Label>Operating temperature</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={operating_temperature}
-                            onChange={(e) =>
-                              setOperating_temperature(e.target.value)
-                            }
-                          />
-                        </Form.Group>
-                      </Row>
-
-                      <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                          Close
-                        </Button>
-                        <Button
-                          className="button-delete"
-                          variant="danger"
-                          onClick={
-                            (() => handleDelete(item.line_number))}
-                        >
-                          Delete
-                        </Button>
-                        <Button
-                          variant="primary"
-                          type="submit"
-                          onClick={handleClose}
-                        >
-                          Save Changes
-                        </Button>
-                      </Modal.Footer>
-                    </Form>
-                  </Modal.Body>
-                </Modal>{" "}
-                <Button variant="light" className="mb-2" size="sm">
-                  <Link
-                    className="Link"
-                    type="text"
-                    onClick={() => handleData(item.line_number)}
-                    to={`/listcml/${item.line_number}`}
-                  >
-                    Detail
-                  </Link>
+                  ADD PIPING
                 </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
+              </Modal.Header>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Line number</th>
+                    <th>Iocation</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Pipe size (inch)</th>
+                    <th>Service</th>
+                    <th>Material</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.line_number}</td>
+                      <td>{item.location}</td>
+                      <td>{item.froms}</td>
+                      <td>{item.tos}</td>
+                      <td>{item.pipe_size}</td>
+                      <td>{item.service}</td>
+                      <td>{item.material}</td>
+                      <td>
+                        <Button
+                          variant="secondary"
+                          className="mb-2"
+                          size="sm"
+                          onClick={() => handleEdit(item)}
+                        >
+                          info
+                        </Button>{" "}
+                        <Modal
+                          dialogClassName="modal-90w"
+                          show={show}
+                          onHide={handleClose}
+                        >
+                          <Modal.Header closeButton>
+                            <Modal.Title>EDIT INFORMATION</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            <Form onSubmit={handleSubmit}>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Line number</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={newline_number}
+                                    onChange={(e) =>
+                                      setLine_number(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>location</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={location}
+                                    onChange={(e) =>
+                                      setLocation(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>From</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={froms}
+                                    onChange={(e) => setFrom(e.target.value)}
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>To</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={tos}
+                                    onChange={(e) => setTo(e.target.value)}
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Drawing number</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={drawing_number}
+                                    onChange={(e) =>
+                                      setDrawing_number(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>service</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={service}
+                                    onChange={(e) => setService(e.target.value)}
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Material</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={material}
+                                    onChange={(e) =>
+                                      setMaterial(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>Inservice date</Form.Label>
+                                  <Form.Control
+                                    type="date"
+                                    value={inservice_date}
+                                    onChange={(e) =>
+                                      setInservice_date(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Pipe size</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={pipe_size}
+                                    onChange={(e) =>
+                                      setPipe_size(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>Original thickness</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={original_thickness}
+                                    onChange={(e) =>
+                                      setOriginal_thickness(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Stress</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={stress}
+                                    onChange={(e) => setStress(e.target.value)}
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>Joint efficiency</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={joint_efficiency}
+                                    onChange={(e) =>
+                                      setJoint_efficiency(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Ca</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={ca}
+                                    onChange={(e) => setCa(e.target.value)}
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>Design life</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={design_life}
+                                    onChange={(e) =>
+                                      setDesign_life(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Design pressure</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={design_pressure}
+                                    onChange={(e) =>
+                                      setDesign_pressure(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>Operating pressure</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={operating_pressure}
+                                    onChange={(e) =>
+                                      setOperating_pressure(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Design temperature</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={design_temperature}
+                                    onChange={(e) =>
+                                      setDesign_temperature(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                  <Form.Label>Operating temperature</Form.Label>
+                                  <Form.Control
+                                    type="number"
+                                    value={operating_temperature}
+                                    onChange={(e) =>
+                                      setOperating_temperature(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+                              </Row>
+
+                              <Modal.Footer>
+                                <Button
+                                  variant="secondary"
+                                  onClick={handleClose}
+                                >
+                                  Close
+                                </Button>
+                                <Button
+                                  className="button-delete"
+                                  variant="danger"
+                                  onClick={() => handleDelete(item.line_number)}
+                                >
+                                  Delete
+                                </Button>
+                                <Button
+                                  variant="primary"
+                                  type="submit"
+                                  onClick={refreshPage}
+                                // onClick={handleClose}
+                                >
+                                  Save Changes
+                                </Button>
+                              </Modal.Footer>
+                            </Form>
+                          </Modal.Body>
+                        </Modal>{" "}
+                        <Button
+                          href={`/listcml/${item.line_number}`}
+                          onClick={() => handleData(item.line_number)}
+                          variant="info"
+                          className="mb-2"
+                          size="sm"
+                        >
+                          Detail
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          </Card.Body>
+        </Card>
+      </div>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Col from "react-bootstrap/Col";
@@ -7,14 +7,27 @@ import Row from "react-bootstrap/Row";
 import Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import { Button } from "react-bootstrap";
+import InputGroup from 'react-bootstrap/InputGroup';
 
-// import "../css/table.scss";
 export default function CreateInfo() {
   const [inputs, setInputs] = useState({});
   const navigate = useNavigate();
-  // console.log(inputs);
+  const [data, setData] = useState([]);
 
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3001/api/data`)
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+
   const handleChange = (e) => {
     setInputs((values) => ({ ...values, [e.target.name]: e.target.value }));
   };
@@ -29,16 +42,40 @@ export default function CreateInfo() {
       console.log(err);
     }
   };
+  const line = data.map((number, index) => number.line_number);
+  // eslint-disable-next-line
+  const [show, setShow] = useState(true);
+  const [showEmpty, setShowAlertEmpty] = useState(true);
+
+
+  function Alert() {
+    for (let i = 0; i < line.length; i++) {
+      // console.log(line[i])
+      // eslint-disable-next-line
+      if (inputs.line_number == line[i]) {
+        // console.log("ซ้ำ")
+        if (show) {
+          return (
+            <InputGroup hasValidation >
+              <Form.Control.Feedback className="InputGroup" type="text" >
+                ID LINE number already exist.
+              </Form.Control.Feedback>
+            </InputGroup>
+          );
+        }
+      }
+    }
+  }
 
   return (
     <>
       <div className="from">
-
         <Card>
           <Card.Body>
             <Modal.Header>
-              <Button variant="outline-secondary" className="mb-2" size="sm" >
-                <Link to={`/`}> BACK </Link>
+
+              <Button href={`/`} variant="light" className="mb-2" size="sm" >  BACK
+                {/* <Link to={`/`}> BACK </Link> */}
               </Button>
 
               <Modal.Title className="Title" >ADD PIPING</Modal.Title>
@@ -52,6 +89,7 @@ export default function CreateInfo() {
                     name="line_number"
                     onChange={handleChange}
                   />
+                  <Alert />
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridPassword">
@@ -217,14 +255,17 @@ export default function CreateInfo() {
                 </Form.Group>
               </Row>
 
-              <Link
+              {/* <Link
                 onClick={handleClick}
                 to={"/Piping"}
                 variant="primary"
                 type="submit"
               >
                 Submit
-              </Link>
+              </Link> */}
+              <Button onClick={handleClick} href={`/`} variant="success">Submit</Button>
+              {/* <EmptyAlert /> */}
+
             </Form>
           </Card.Body>
         </Card>

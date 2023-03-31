@@ -123,15 +123,13 @@ export default function ListCML() {
     setEditing(true);
   };
 
-  const handleDelete = (line_number, cml_number) => {
+  const handleDelete = (newcml_number) => {
     axios
       .delete(
-        `http://localhost:3001/api/data/delete/cml?line_number=${line_number}&cml_number=${cml_number}`
+        `http://localhost:3001/api/data/delete/cml?line_number=${id}&cml_number=${newcml_number}`
       )
       .then(() => {
-        // setData(data.filter((item) => item.line_number));
-        window.location.reload(false);
-
+        setData(data.filter((item) => item.line_number));
       })
       .catch((error) => {
         console.log(error);
@@ -183,7 +181,9 @@ export default function ListCML() {
                   </tr>
                 </thead>
                 <tbody>
+                  {/* {data.length ==  0 && */}
                   {data.map((item, index) => (
+                    // {dataInfo.length == item.actual_outside_diameter}
                     <tr key={index}>
                       {/* <td>{item.line_number}</td> */}
                       <td>{item.cml_number}</td>
@@ -192,7 +192,6 @@ export default function ListCML() {
                       <td>{item.design_thickness} </td>
                       <td>{item.structural_thickness}</td>
                       <td>{item.required_thickness}</td>
-
                       <td>
                         <Button
                           href={`/list_tp/${item.line_number}/${item.cml_number}`}
@@ -274,7 +273,7 @@ export default function ListCML() {
                                     Actual outside diameter
                                   </Form.Label>
                                   <Form.Control
-                                    type="number"
+                                    type="text"
                                     value={actual_outside_diameter}
                                     onChange={(e) =>
                                       setActual_outside_diameter(e.target.value)
@@ -285,7 +284,7 @@ export default function ListCML() {
                                 <Form.Group as={Col}>
                                   <Form.Label>Design thickness</Form.Label>
                                   <Form.Control
-                                    type="number"
+                                    type="text"
                                     value={design_thickness}
                                     onChange={(e) =>
                                       setDesign_thickness(e.target.value)
@@ -330,7 +329,7 @@ export default function ListCML() {
                                   variant="primary"
                                   type="submit"
                                   onClick={refreshPage}
-                                // onClick={handleClose}
+                                  // onClick={handleClose}
                                 >
                                   Save Changes
                                 </Button>
@@ -342,13 +341,14 @@ export default function ListCML() {
                           className="mb-2"
                           variant="danger"
                           size="sm"
-                          onClick={() => handleDelete(item.line_number, item.cml_number)}
+                          onClick={() => handleDelete(item.cml_number)}
                         >
                           Delete
                         </Button>
                       </td>
                     </tr>
                   ))}
+                  {/* })} */}
                 </tbody>
               </Table>
             </div>

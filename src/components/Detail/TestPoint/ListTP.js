@@ -9,6 +9,7 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import Card from "react-bootstrap/Card";
 
 export default function ListTP() {
   const [data, setData] = useState([]);
@@ -30,10 +31,11 @@ export default function ListTP() {
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
+
   useEffect(() => {
     axios
       .get(
-        `http://localhost:3001/api/data/test_point?line_number=${IDline_number}`
+        `http://localhost:3001/api/data/test_point?cml_number=${IDCml_number}`
       )
       .then((response) => {
         setData(response.data);
@@ -53,7 +55,7 @@ export default function ListTP() {
       tp_description: tp_description,
       note: note,
     };
-
+    console.log(newData);
     axios
       .put(`http://localhost:3001/api/data/update/test_point`, newData)
       .then(() => {
@@ -70,7 +72,6 @@ export default function ListTP() {
   };
 
   const handleEdit = (item) => {
-    // console.log(item.cml_description);
     setLine_number(IDline_number);
     setCml_number(item.cml_number);
     setTp_number(item.tp_number);
@@ -79,164 +80,202 @@ export default function ListTP() {
 
     setId(item.tp_number);
     setShow(true);
-
     setEditing(true);
   };
 
-  const handleDelete = (cml_number, tp_number) => {
+  const handleDelete = (line_number, cml_number, tp_number) => {
     axios
       .delete(
-        `http://localhost:3001/api/data/delete/test_point?line_number=${IDline_number}&cml_number=${cml_number}&tp_number=${tp_number}`
+        `http://localhost:3001/api/data/delete/test_point?line_number=${line_number}&cml_number=${cml_number}&tp_number=${tp_number}`
       )
-      .then(() => { })
+      .then(() => {
+        window.location.reload(false);
+      })
       .catch((error) => {
         console.log(error);
       });
   };
+  // Refresh Page
+  function refreshPage() {
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 1000);
+    console.log("page to reload");
+  }
 
   return (
     <>
-      <div className="table">
-        <h2 className="title">TEST POINT</h2>
+      <div className="Card">
+        <h2 className="title">TEST POINT</h2> <br />
+        <h4 className="title">LINE NUMBER : {IDline_number} </h4> <br />
+        <Card>
+          <Card.Body className="card-body">
+            <div className="table">
+              <Modal.Header className="Title">
+                <Button
+                  href={`/listcml/${IDline_number}`}
+                  variant="light"
+                  className="mb-2"
+                  size="sm"
+                >
+                  {" "}
+                  BACK CML
+                </Button>
 
-        <h4 className="title">LINE NUMBER : {IDline_number} </h4>
+                <Button
+                  href={`/create_tp/${IDline_number}/${id}`}
+                  variant="light"
+                  className="mb-2"
+                  size="sm"
+                >
+                  {" "}
+                  ADD TP
+                  {/* <Link to={`/create_tp/${IDline_number}/${id}`}> Add TP </Link> */}
+                </Button>
+              </Modal.Header>
 
-        <Button variant="light" className="mb-2" size="sm">
-          <Link to={`/create_tp/${IDline_number}/${id}`}> Add TP </Link>
-        </Button>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Line number</th>
+                    <th>Cml number</th>
+                    <th>TP number</th>
+                    <th>TP description</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.line_number}</td>
+                      <td>{item.cml_number}</td>
+                      <td>{item.tp_number}</td>
+                      <td>{item.tp_description}</td>
+                      <td>{item.note}</td>
+                      <td>
+                        <Button
+                          variant="info"
+                          href={`/list_th/${IDline_number}/${item.cml_number}/${item.tp_number}`}
+                          className="mb-2"
+                          size="sm"
+                        >
+                          {" "}
+                          View Thickness
+                        </Button>{" "}
+                        <Button
+                          variant="secondary"
+                          className="mb-2"
+                          size="sm"
+                          onClick={() => handleEdit(item)}
+                        >
+                          Edit
+                        </Button>{" "}
+                        <Modal
+                          dialogClassName="modal-90w"
+                          show={show}
+                          onHide={handleClose}
+                        >
+                          <Modal.Header closeButton>
+                            <Modal.Title>EDIT INFORMATION</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            <Form onSubmit={handleSubmit}>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Line number</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={IDline_number}
+                                    onChange={(e) =>
+                                      setLine_number(e.target.value)
+                                    }
+                                    disabled
+                                  />
+                                </Form.Group>
+                                <Form.Group as={Col}>
+                                  <Form.Label>Cml number</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={cml_number}
+                                    onChange={(e) =>
+                                      setCml_number(e.target.value)
+                                    }
+                                    disabled
+                                  />
+                                </Form.Group>
+                              </Row>
 
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Line number</th>
-              <th>Cml number</th>
-              <th>TP number</th>
-              <th>TP description</th>
-              <th>Note</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, index) => (
-              <tr key={index}>
-                <td>{item.line_number}</td>
-                <td>{item.cml_number}</td>
-                <td>{item.tp_number}</td>
-                <td>{item.tp_description}</td>
-                <td>{item.note}</td>
-                <td>
-                  <Button variant="light" className="mb-2" size="sm">
-                    <Link
-                      to={`/list_th/${item.line_number}/${item.cml_number}/${item.tp_number}`}
-                      state={{ from: "id" }}
-                    >
-                      View Thickness
-                    </Link>
-                  </Button>{" "}
-                  <Button
-                    variant="light"
-                    className="mb-2"
-                    size="sm"
-                    onClick={() => handleEdit(item)}
-                  >
-                    Edit
-                  </Button>{" "}
-                  <Modal
-                    dialogClassName="modal-90w"
-                    show={show}
-                    onHide={handleClose}
-                  >
-                    <Modal.Header closeButton>
-                      <Modal.Title>EDIT INFORMATION</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <Form onSubmit={handleSubmit}>
-                        <Row className="mb-3">
-                          <Form.Group as={Col} controlId="formGridEmail">
-                            <Form.Label>Line number</Form.Label>
-                            <Form.Control
-                              type="text"
-                              value={IDline_number}
-                              onChange={(e) => setLine_number(e.target.value)}
-                            />
-                          </Form.Group>
-                          <Form.Group as={Col} controlId="formGridEmail">
-                            <Form.Label>Cml number</Form.Label>
-                            <Form.Control
-                              type="text"
-                              value={cml_number}
-                              onChange={(e) => setCml_number(e.target.value)}
-                            />
-                          </Form.Group>
-                        </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Tp number</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={newtp_number}
+                                    onChange={(e) =>
+                                      setTp_number(e.target.value)
+                                    }
+                                    disabled
+                                  />
+                                </Form.Group>
 
-                        <Row className="mb-3">
-                          <Form.Group as={Col}>
-                            <Form.Label>Tp number</Form.Label>
-                            <Form.Control
-                              type="text"
-                              value={newtp_number}
-                              onChange={(e) => setTp_number(e.target.value)}
-                            />
-                          </Form.Group>
-
-                          <Form.Group as={Col}>
-                            <Form.Label>Tp description</Form.Label>
-                            <Form.Control
-                              type="text"
-                              value={tp_description}
-                              onChange={(e) =>
-                                setTp_description(e.target.value)
-                              }
-                            />
-                          </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
-                          <Form.Group as={Col}>
-                            <Form.Label>Note</Form.Label>
-                            <Form.Control
-                              type="text"
-                              value={note}
-                              onChange={(e) => setNote(e.target.value)}
-                            />
-                          </Form.Group>
-                        </Row>
-                        <Modal.Footer>
-                          <Button variant="secondary" onClick={handleClose}>
-                            Close
-                          </Button>
-                          <button
-                            className="button-delete"
-                            variant="danger"
-                            onClick={() => handleDelete(item.line_number)}
-                          >
-                            Delete
-                          </button>
-                          <Button
-                            variant="primary"
-                            type="submit"
-                            onClick={handleClose}
-                          >
-                            Save Changes
-                          </Button>
-                        </Modal.Footer>
-                      </Form>
-                    </Modal.Body>
-                  </Modal>{" "}
-                  <Button
-                    className="mb-2"
-                    variant="danger"
-                    size="sm"
-                    onClick={() =>
-                      handleDelete(item.cml_number, item.tp_number)
-                    }
-                  >
-                    Delete
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                                <Form.Group as={Col}>
+                                  <Form.Label>Tp description</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={tp_description}
+                                    onChange={(e) =>
+                                      setTp_description(e.target.value)
+                                    }
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Row className="mb-3">
+                                <Form.Group as={Col}>
+                                  <Form.Label>Note</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    value={note}
+                                    onChange={(e) => setNote(e.target.value)}
+                                  />
+                                </Form.Group>
+                              </Row>
+                              <Modal.Footer>
+                                <Button
+                                  variant="secondary"
+                                  onClick={handleClose}
+                                >
+                                  Close
+                                </Button>
+                                <Button
+                                  variant="primary"
+                                  type="submit"
+                                  // onClick={handleClose}
+                                  onClick={refreshPage}
+                                >
+                                  Save Changes
+                                </Button>
+                              </Modal.Footer>
+                            </Form>
+                          </Modal.Body>
+                        </Modal>{" "}
+                        <Button
+                          className="mb-2"
+                          variant="danger"
+                          size="sm"
+                          onClick={() =>
+                            handleDelete(item.line_number, item.cml_number, item.tp_number)
+                          }
+                        >
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          </Card.Body>
+        </Card>
       </div>
     </>
   );
